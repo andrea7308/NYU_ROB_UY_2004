@@ -12,9 +12,9 @@ JOINT_NAME_LEAD = "leg_front_r_3"
 
 ####
 ####
-KP = 0.0  # YOUR KP VALUE
-KI = 0.0 # YOUR KI VALUE
-KD = 0.0  # YOUR KD VALUE
+KP = 1.6 # YOUR KP VALUE
+KI = 0.05 # YOUR KI VALUE
+KD = 0.09 # YOUR KD VALUE
 ####
 ####
 LOOP_RATE = 200  # Hz
@@ -22,7 +22,7 @@ DELTA_T = 1 / LOOP_RATE
 MAX_TORQUE = 2.0
 DEAD_BAND_SIZE = 0.095
 PENDULUM_CONTROL = False
-LEG_TRACKING_CONTROL = False
+LEG_TRACKING_CONTROL = not PENDULUM_CONTROL
 
 
 class JointStateSubscriber(Node):
@@ -48,6 +48,8 @@ class JointStateSubscriber(Node):
         self.target_joint_pos = 0
         self.target_joint_vel = 0
         # self.torque_history = deque(maxlen=DELAY)
+        self.last_joint_error = 0
+        self.sum_joint_error = 0
 
         # Create a timer to run control_loop at the specified frequency
         self.create_timer(1.0 / LOOP_RATE, self.control_loop)
@@ -63,30 +65,35 @@ class JointStateSubscriber(Node):
             self.direction = -1
         if joint_pos < -0.10:
             self.direction = 1
-        torque = self.direction * 0.14
+        torque = self.direction * 0.2
 
         return torque
 
-    def calculate_torque_for_leg_tracking(self, joint_pos, joint_vel, target_joint_pos, target_joint_vel):
+    def calculate_torque_for_leg_tracking(self, joint_pos, joint_vel, target_joint_pos, target_joint_vel, sum_joint_error):
         ####
         #### YOUR CODE HERE
         ####
+
+        sum_joint_error += (target_joint_pos-joint_pos)
+
+
         torque = 0
+        tq= (target_joint_pos-joint_pos)*KP
+        tq2 = (target_joint_pos-joint_pos)*KP + (target_joint_vel - joint_vel)*KD
+        tq3 = (target_joint_pos-joint_pos)*KP + (target_joint_vel - joint_vel)*KD + (sum_joint_error)*KI
 
-
+        torque=tq3
 
         # Leave this code unchanged
         if torque > 0:
-            torque = max(torque, DEAD_BAND_SIZE)
+            torque = torque+DEAD_BAND_SIZE
         elif torque < 0:
-            torque = min(torque, -DEAD_BAND_SIZE)
+            torque = torque-DEAD_BAND_SIZE
         
         return torque
 
     def print_info(self):
         """Print joint information every 2 control loops"""
-        if True:
-            return
             
         if self.print_counter == 0:
             self.get_logger().info(
@@ -118,7 +125,7 @@ class JointStateSubscriber(Node):
             self.calculated_torque = self.calculate_torque_for_pendulum_control(self.joint_pos)
         elif LEG_TRACKING_CONTROL: 
             self.target_joint_pos, self.target_joint_vel = self.get_target_joint_info()
-            self.calculated_torque = self.calculate_torque_for_leg_tracking(self.joint_pos, self.joint_vel, self.target_joint_pos, self.target_joint_vel)
+            self.calculated_torque = self.calculate_torque_for_leg_tracking(self.joint_pos, self.joint_vel, self.target_joint_pos, self.target_joint_vel, self.sum_joint_error)
         else:
             self.calculated_torque = 0
             

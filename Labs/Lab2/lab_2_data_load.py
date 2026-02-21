@@ -47,6 +47,6 @@ def plot_leg_path(data_dictionary):
 
 
 ##### MAIN ######
-data_loader = DataLoader('./lab_2_datab.pkl')
+data_loader = DataLoader('./lab_2_data.pkl')
 data_dictionary = data_loader.load()
 plot_leg_path(data_dictionary)

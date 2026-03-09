@@ -225,11 +225,25 @@ class InverseKinematics(Node):
         ################################################################################################
         # TODO: implement interpolation for all 4 legs here
         ################################################################################################ 
-        #        
 
-        if t == 0:
-            self.ee_triangle_positions[leg_index][0]
+        pts = self.ee_triangle_positions[leg_index]
 
+        num_segments = len(pts) - 1
+        segment_length = 1.0 / num_segments
+
+        segment = int(t / segment_length)
+
+        if segment >= num_segments:
+            return pts[-1]
+
+        local_t = (t - segment * segment_length) / segment_length
+
+        p1 = pts[segment]
+        p2 = pts[segment + 1]
+
+        interpolated = (1 - local_t) * p1 + local_t * p2
+
+        return interpolated
         
 
 

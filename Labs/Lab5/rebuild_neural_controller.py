@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 
 # Define source and destination mappings
-LAB_DIR = Path("/home/pi/lab_5_fall_2025")
+LAB_DIR = Path("/home/pi/NYU_ROB_UY_2004/Labs/Lab5")
 NEURAL_CONTROLLER_LAUNCH = Path("/home/pi/pupperv3-monorepo/ros2_ws/src/neural_controller/launch")
 ROS2_WS = Path("/home/pi/pupperv3-monorepo/ros2_ws")
 
@@ -39,11 +39,6 @@ FILE_MAPPINGS = [
         "source": LAB_DIR / "estop_controller.cpp",
         "destination": Path("/home/pi/pupperv3-monorepo/ros2_ws/src/joy_utils/src/estop_controller.cpp"),
         "description": "Emergency stop controller C++ source file"
-    },
-    {
-        "source": LAB_DIR / "parkour_policy.json",
-        "destination": NEURAL_CONTROLLER_LAUNCH / "parkour_policy.json",
-        "description": "Parkour neural network policy file"
     },
     {
         "source": LAB_DIR / "test_policy.json",

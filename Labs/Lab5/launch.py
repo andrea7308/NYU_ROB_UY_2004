@@ -145,18 +145,18 @@ def generate_launch_description():
     )
 
 
-    parkour_robot_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "neural_controller_parkour",
-            "--controller-manager",
-            "/controller_manager",
-            "--controller-manager-timeout",
-            "30",
-            "--inactive",
-        ],
-    )
+    # parkour_robot_controller_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=[
+    #         "neural_controller_parkour",
+    #         "--controller-manager",
+    #         "/controller_manager",
+    #         "--controller-manager-timeout",
+    #         "30",
+    #         "--inactive",
+    #     ],
+    # )
 
 
     test_robot_controller_spawner = Node(
@@ -231,7 +231,7 @@ def generate_launch_description():
         control_node,
         robot_controller_spawner,
         three_legged_robot_controller_spawner,
-        parkour_robot_controller_spawner,
+        # parkour_robot_controller_spawner,
         test_robot_controller_spawner,
         joint_state_broadcaster_spawner,
         # Comment/uncomment as needed:
